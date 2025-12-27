@@ -1,0 +1,16 @@
+services:
+  app:
+    build: .
+    container_name: phoenix_basic
+    volumes:
+      - .:/app
+    ports:
+      - "4000:4000"
+    environment:
+      - MIX_ENV=dev
+      - PORT=4000
+      - PHX_SERVER=true
+    working_dir: /app/basic
+    command: bash -lc "mix deps.get && mix phx.server"
+    tty: true
+    stdin_open: true
