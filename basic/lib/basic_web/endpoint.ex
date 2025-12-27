@@ -1,6 +1,9 @@
 defmodule BasicWeb.Endpoint do
   use Phoenix.Endpoint, otp_app: :basic
 
+  # Popcorn(WASM)の実行に必要な COOP/COEP ヘッダー
+  plug BasicWeb.Plugs.CrossOriginIsolation
+
   # The session will be stored in the cookie and signed,
   # this means its contents can be read but not tampered with.
   # Set :encryption_salt if you would also like to encrypt it.
