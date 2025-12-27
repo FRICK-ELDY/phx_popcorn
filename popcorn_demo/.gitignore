@@ -1,0 +1,16 @@
+# Mix build artifacts
+/_build/
+/deps/
+/cover/
+/doc/
+
+# Editor/IDE
+/.elixir_ls/
+
+# OS
+.DS_Store
+
+# Popcorn optional runtime source (if built locally)
+/popcorn_runtime_source/
+
+

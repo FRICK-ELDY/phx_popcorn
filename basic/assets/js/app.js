@@ -25,11 +25,39 @@ import {LiveSocket} from "phoenix_live_view"
 import {hooks as colocatedHooks} from "phoenix-colocated/basic"
 import topbar from "../vendor/topbar"
 
+// External JS hook for Popcorn WASM
+const PopcornWasm = {
+  async mounted() {
+    const status = this.el.querySelector("#popcorn-status")
+    try {
+      // Check existence first to keep page functional without assets
+      let available = false
+      try {
+        const res = await fetch("/wasm/popcorn.js", { method: "HEAD" })
+        available = res.ok
+      } catch (_e) {}
+
+      if (!available) {
+        if (status) status.textContent = "WASM アセットが見つかりません。配置後に自動で有効化されます。"
+        return
+      }
+
+      if (status) status.textContent = "WASM初期化中…"
+      const { Popcorn } = await import("/wasm/popcorn.js")
+      await Popcorn.init({ onStdout: console.log })
+      if (status) status.textContent = "WASM初期化完了。コンソールをご確認ください。"
+    } catch (err) {
+      console.error("Failed to init Popcorn WASM:", err)
+      if (status) status.textContent = "WASM 初期化に失敗しました。"
+    }
+  }
+}
+
 const csrfToken = document.querySelector("meta[name='csrf-token']").getAttribute("content")
 const liveSocket = new LiveSocket("/live", Socket, {
   longPollFallbackMs: 2500,
   params: {_csrf_token: csrfToken},
-  hooks: {...colocatedHooks},
+  hooks: {...colocatedHooks, PopcornWasm},
 })
 
 // Show progress bar on live navigation and form submits
